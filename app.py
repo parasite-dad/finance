@@ -49,7 +49,7 @@ def index():
     if request.method == "GET":
         # BELOW SQL NOT GOOD COMPARE TO STAFF SQL, IT USE TYPE TAP TO KNOW DIFFERENCE OF STOCK REMAIN
         dbtransactions = db.execute(
-            "SELECT stockname, stocksymbol,stockprice,totalprice , SUM(stockqty)-(SELECT SUM(temptrans1.stockqty) FROM transactions AS temptrans1 WHERE temptrans1.type='FALSE' AND temptrans1.userid=temptrans.userid AND temptrans1.stocksymbol=temptrans.stocksymbol GROUP BY temptrans1.stocksymbol) as stockqty FROM transactions AS temptrans WHERE type='TRUE' AND userid=? GROUP BY stocksymbol", session["user_id"])
+            "SELECT temptrans.stockname, stocksymbol,stockprice,totalprice , SUM(stockqty)-(SELECT SUM(temptrans1.stockqty) FROM transactions AS temptrans1 WHERE temptrans1.type='FALSE' AND temptrans1.userid=temptrans.userid AND temptrans1.stocksymbol=temptrans.stocksymbol GROUP BY temptrans1.stocksymbol) as stockqty FROM transactions AS temptrans WHERE type='TRUE' AND userid=? GROUP BY stocksymbol", session["user_id"])
         dbusers = db.execute(
             "SELECT * FROM users WHERE id = ?", session["user_id"])
         rowtransactions = []
