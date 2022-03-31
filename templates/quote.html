@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+        <div class="header">
+            <h1>Quote</h1>
+        </div>
+        <div class="container">
+            <div class="section">
+                <h2>Search a quote</h2>
+                <form action="/quote" method="POST">
+                    <div class="mb-3">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="symbol" name="symbol" placeholder="Symbol" type="text">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Quote</button>
+                </form>
+            </div>
+            <div class="section">
+                <h2>Quote</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Symbol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <td>{{name}}</td>
+                                <td>{{price}}</td>
+                                <td>{{symbol}}</td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

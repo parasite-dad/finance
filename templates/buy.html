@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Buy
+{% endblock %}
+
+{% block main %}
+        <div class="header">
+            <h1>HI, {{clientname}}, Your balance is {{balance}}</h1>
+        </div>
+        <div class="container">
+            <div class="section">
+                <h2>Buy a stock</h2>
+                <form action="/buy" method="POST">
+                    <div class="mb-3">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="buysymbol" name="symbol" placeholder="Symbol" type="text">
+                    </div>
+                    <div class="mb-3" onkeyup="totalprice()">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="buyqty" name="shares" placeholder="Shares Quantity" type="text">
+                    </div>
+                    <div class="mb-3" >
+                        <input type="hidden" id="buyprice" name="buyprice" placeholder="Price type="number" value={{price}}>
+                        Current Price:{{price}}
+                    </div>
+                    <div class="mb-3" id="stocktotal">
+                    </div>
+                    <button class="btn btn-primary" type="submit">Buy</button>
+                </form>
+            </div>
+<!--NO USE OF THIS JAVASCRIPT CODE AS DATABASE STORE THE TOTALVALUE
+<script>
+function totalprice(){
+    let buyqty1=document.getElementById("buyqty").value;
+    let buyprice1=document.getElementById("stockprice1").innerHTML;
+    let totalprice1=document.getElementById("stocktotal");
+    totalprice1.innerHtml=buyprice1*buyqty1;
+}
+</script> -->
+            <div class="section">
+                <h2>Buy a stock</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Shares</th>
+                            <th>Symbol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <td>{{name}}</td>
+                                <td id="stockprice1" >{{price}}</td>
+                                <td>{{shares}}</td>
+                                <td>{{symbol}}</td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

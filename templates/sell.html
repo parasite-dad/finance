@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sell
+{% endblock %}
+
+{% block main %}
+        <div class="header">
+            <h1>Hi, {{clientname}}, You have cash {{cashbalance}}</h1>
+        </div>
+        <div class="container">
+            <div class="section">
+                <h2>Sell a stock</h2>
+                <form action="/sell" method="POST">
+                  <!--  <div class="mb-3">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="sellsymbol" name="symbol" placeholder="Symbol" type="text">
+                    </div> -->
+                    <div class="mb-3">
+                        <select class="form-select" name="symbol">
+                            {% for transaction in transactions%}
+                                {% if transaction.stockqty!=0 %}
+                                    <option>{{transaction["stocksymbol"]}}</option>
+                                {%endif%}
+                            {% endfor %}
+                    </select>
+                    </div>
+                    <div class="mb-3" onkeyup="totalprice()">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="sellqty" name="shares" placeholder="Shares Quantity" type="number">
+                    </div>
+                    <div class="mb-3" >
+                        <input type="hidden" id="sellprice" name="sellprice" placeholder="Price type="number" value={{price}}>
+                        Current Price:{{price}}
+                    </div>
+                    <div class="mb-3" id="stocktotal">
+
+                    </div>
+                    <button class="btn btn-primary" type="submit">Sell</button>
+                </form>
+            </div>
+<!-- NO USE OF BELOW SCRIPT AS DATABASE STORE THE TOTAL PRICE
+<script>
+function totalprice(){
+    let buyqty1=document.getElementById("buyqty").value;
+    let buyprice1=document.getElementById("stockprice1").innerHTML;
+    let totalprice1=document.getElementById("stocktotal");
+    totalprice1.innerHtml=buyprice1*buyqty1;
+}
+</script> -->
+            <div class="section">
+                <h2>Sell a stock</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Shares</th>
+                            <th>Symbol</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            <tr>
+                                <td>{{name}}</td>
+                                <td id="stockprice1" >{{price}}</td>
+                                <td>{{shares}}</td>
+                                <td>{{symbol}}</td>
+                            </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}

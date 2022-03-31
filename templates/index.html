@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+{% block main %}
+        <div class="header">
+            <h1>HI, {{clientname}}, You have cash {{cashbalance}}, Your total assets is {{assetbalance}}</h1>
+        </div>
+        <div class="container">
+            <div class="section">
+                <h2>Index</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Symbol</th>
+                            <th>CurrentPrice</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for transaction in transactions%}
+                        {% if transaction.stockqty!=0 %}
+                            <tr>
+                                <td>{{transaction["stockname"]}}</td>
+                                <td>{{transaction["stocksymbol"]}}</td>
+                                <td>{{transaction["stockprice"]}}</td>
+                                <td>{{transaction["stockqty"]}}</td>
+                                <td>{{transaction["totalprice"]}}</td>
+                            </tr>
+                        {%endif%}
+                    {% endfor %}
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>Total Stock value:</td>
+                                <td>{{totalvalue}}</td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="section">
+                <form action="/" method="POST">
+                    <div class="mb-3">
+                        <select class="form-select" name="symbol">
+                            {% for transaction in transactions%}
+                                {% if transaction.stockqty!=0 %}
+                                    <option>{{transaction["stocksymbol"]}}</option>
+                                {%endif%}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="qty" name="shares" placeholder="Buy/Sell Quantity" type="number">
+                    </div>
+                    <div class="mb-3">
+                        <button class="btn btn-primary" type="submit" name="submit_btn" value="buy">Buy</button>
+                        <button class="btn btn-primary" type="submit" name="submit_btn" value="sell">Sell</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+{% endblock %}

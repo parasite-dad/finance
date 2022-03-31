@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Setting
+{% endblock %}
+
+{% block main %}
+<div class="section">
+    <form action="/setting" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="oldpassword" name="oldpassword" placeholder="Old Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="newpassword" name="newpassword" placeholder="New Password" type="password">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="confirmation" name="confirmation" placeholder="Confirmation" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit" name="formbutton" value="changepwd">Change password</button>
+    </form>
+</div>
+<div class="section">
+    <form action="/setting" method="post" >
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="cashadd" name="cashadd" placeholder="Cash Add" type="number">
+        </div>
+        <div class="mb-3">
+            <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit" name="formbutton" value="addcash">Add Cash</button>
+    </form>
+</div>
+{% endblock %}
