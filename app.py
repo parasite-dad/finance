@@ -136,7 +136,7 @@ def buy():
             return apology("Not enough cash to buy this shares", 400)
         else:
             db.execute("INSERT INTO transactions (userid, stockname, stocksymbol, stockprice, stockqty, totalprice,type) VALUES (?,?,?,?,?,?,?)",
-                       session["user_id"], rows['name'], rows['symbol'], rows['price'], shares1, rows['price']*shares1, TRUE)
+                       session["user_id"], rows['name'], rows['symbol'], rows['price'], shares1, rows['price']*shares1, 'TRUE')
             db.execute("UPDATE users SET cash=? WHERE id=?",
                        float(dbrows[0]['cash']-rows['price'] * shares1), session["user_id"])
             dbrows = db.execute(
