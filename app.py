@@ -89,7 +89,7 @@ def index():
         if request.form["submit_btn"] == "sell":
             if not request.form.get("shares"):
                 return apology("must provide qty to sell", 403)
-        # REDIRECT METHOD AND PASSING TWO VARIABLE
+        # REDIRECT METHOD AND PASSING TWO VARIABLE url_for
             return redirect(url_for('sell', symbol=request.form.get("symbol"), shares=request.form.get("shares")))
 
 
