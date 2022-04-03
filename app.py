@@ -26,11 +26,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-db = SQL("sqlite:///finance.db")
-# uri = os.getenv("DATABASE_URL")
-# if uri.startswith("postgres://"):
-#    uri = uri.replace("postgres://", "postgresql://")
-# db = SQL(uri)
+#db = SQL("sqlite:///finance.db")
+uri = os.getenv("DATABASE_URL")
+if uri.startswith("postgres://"):
+    uri = uri.replace("postgres://", "postgresql://")
+db = SQL(uri)
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
@@ -54,8 +54,11 @@ def index():
         # select stocksymbol ,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end )  from transactions where userid=5 group by stocksymbol;
         # dbtransactions = db.execute(
         #     "SELECT stockname, stocksymbol,stockprice,totalprice , SUM(stockqty)-(SELECT SUM(temptrans1.stockqty) FROM transactions AS temptrans1 WHERE temptrans1.type='FALSE' AND temptrans1.userid=temptrans.userid AND temptrans1.stocksymbol=temptrans.stocksymbol GROUP BY temptrans1.stocksymbol) as stockqty FROM transactions AS temptrans WHERE type='TRUE' AND userid=? GROUP BY stocksymbol", session["user_id"])
+        # dbtransactions = db.execute(
+        #     "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stocksymbol;", session["user_id"])
         dbtransactions = db.execute(
-            "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stocksymbol;", session["user_id"])
+            "SELECT stockname,stocksymbol,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stockname,stocksymbol;", session["user_id"])
+
         if dbtransactions is None:
             print("1none")
         dbusers = db.execute(
@@ -65,7 +68,7 @@ def index():
         totalstockvalue = 0
         # BELOW CODE TO GET THE STOCK LIST CURRENTLY
         # print(dbtransactions[0]['stockqty'])
-        print(dbtransactions[0])
+        # print(dbtransactions[0])
 
 # """         for x in range(len(dbtransactions)):
 # 			currentstockinfo = lookup(dbtransactions[x]["stocksymbol"])
@@ -390,7 +393,7 @@ def register():
                               request.form.get("username"))
             if len(rows) == 0:
                 name = request.form.get("username")
- # GENERATE A HASH
+    # GENERATE A HASH
                 passwordhash = generate_password_hash(
                     request.form.get("password"))
                 db.execute("INSERT INTO users (username, hash) VALUES(?, ?)",
@@ -421,8 +424,11 @@ def sell():
         symbolrequest = request.args.get("symbol")
         sharesrequest = request.args.get("shares")
     else:
+        # dbtransactions = db.execute(
+        #     "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stocksymbol;", session["user_id"])
         dbtransactions = db.execute(
-            "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stocksymbol;", session["user_id"])
+            "SELECT stockname,stocksymbol ,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stockname,stocksymbol;", session["user_id"])
+
         if dbtransactions is None:
             print("1none")
         dbusers = db.execute(
@@ -448,7 +454,7 @@ def sell():
     if currentstockinfo == None:
         return apology("Cannot find this company!", 400)
     dbtransactions = db.execute(
-        "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? AND stocksymbol=? GROUP BY stocksymbol;", session["user_id"], symbolrequest)
+        "SELECT stockname,stocksymbol ,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? AND stockname,stocksymbol=? GROUP BY stocksymbol;", session["user_id"], symbolrequest)
     rowtransactions = []
     print(dbtransactions)
     print(type(dbtransactions[0]["stockqty"]))
