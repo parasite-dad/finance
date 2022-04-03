@@ -26,11 +26,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-# db = SQL("sqlite:///finance.db")
-uri = os.getenv("DATABASE_URL")
-if uri.startswith("postgres://"):
-    uri = uri.replace("postgres://", "postgresql://")
-db = SQL(uri)
+db = SQL("sqlite:///finance.db")
+# uri = os.getenv("DATABASE_URL")
+# if uri.startswith("postgres://"):
+#     uri = uri.replace("postgres://", "postgresql://")
+# db = SQL(uri)
 # Make sure API key is set
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
@@ -339,7 +339,7 @@ def sell():
     if currentstockinfo == None:
         return apology("Cannot find this company!", 400)
     dbtransactions = db.execute(
-        "SELECT stockname,stocksymbol ,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? AND stockname,stocksymbol=? GROUP BY stocksymbol;", session["user_id"], symbolrequest)
+        "SELECT stockname,stocksymbol ,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? AND stocksymbol=? GROUP BY stockname,stocksymbol;", session["user_id"], symbolrequest)
     rowtransactions = []
     print(dbtransactions)
     print(type(dbtransactions[0]["stockqty"]))
