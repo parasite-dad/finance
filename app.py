@@ -26,7 +26,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure CS50 Library to use SQLite database
-#db = SQL("sqlite:///finance.db")
+# db = SQL("sqlite:///finance.db")
 uri = os.getenv("DATABASE_URL")
 if uri.startswith("postgres://"):
     uri = uri.replace("postgres://", "postgresql://")
@@ -50,13 +50,8 @@ def after_request(response):
 def index():
     """Show portfolio of stocks"""
     if request.method == "GET":
-        # BELOW SQL NOT GOOD COMPARE TO STAFF SQL, IT USE TYPE TAP TO KNOW DIFFERENCE OF STOCK REMAIN
-        # select stocksymbol ,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end )  from transactions where userid=5 group by stocksymbol;
-        # dbtransactions = db.execute(
-        #     "SELECT stockname, stocksymbol,stockprice,totalprice , SUM(stockqty)-(SELECT SUM(temptrans1.stockqty) FROM transactions AS temptrans1 WHERE temptrans1.type='FALSE' AND temptrans1.userid=temptrans.userid AND temptrans1.stocksymbol=temptrans.stocksymbol GROUP BY temptrans1.stocksymbol) as stockqty FROM transactions AS temptrans WHERE type='TRUE' AND userid=? GROUP BY stocksymbol", session["user_id"])
-        # dbtransactions = db.execute(
-        #     "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stocksymbol;", session["user_id"])
-        dbtransactions = db.execute(
+        # BELOW SQL NOT GOOD COMPARE TO STAFF SQL, IT IS GROUP BY AND POSTRES AND SQLITE SYSNTAX SEEMS A BIT DIFFERENCE, GROUP BY NEEDED AGAIN stockname, stocksymbol and cannot select stockprice, totalvalue
+         dbtransactions = db.execute(
             "SELECT stockname,stocksymbol,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stockname,stocksymbol;", session["user_id"])
 
         if dbtransactions is None:
@@ -66,34 +61,6 @@ def index():
         rowtransactions = []
         assetbalance = dbusers[0]['cash']
         totalstockvalue = 0
-        # BELOW CODE TO GET THE STOCK LIST CURRENTLY
-        # print(dbtransactions[0]['stockqty'])
-        # print(dbtransactions[0])
-
-# """         for x in range(len(dbtransactions)):
-# 			currentstockinfo = lookup(dbtransactions[x]["stocksymbol"])
-# 			dbtransactions[x]["stockprice"] = currentstockinfo["price"]
-# 			print(dbtransactions[x])
-# 			# STUPID TO CHECK AGAIN THIS SQL TO KNOW THE NULL FIELD THAT THE STOCK NOT SELLING BEFORE AND LOOP TO COPY TO NEW ROWTRANSACTIONS
-# 			if dbtransactions[x]['stockqty'] is None:
-# 				stockqtytemp = db.execute("SELECT SUM(stockqty) FROM transactions as temptrans WHERE type='TRUE' AND userid=? AND stocksymbol=? GROUP BY userid, stocksymbol",
-# 										  session["user_id"], currentstockinfo["symbol"])
-# 				# print(stockqtytemp)
-# 				dbtransactions[x]["stockqty"] = stockqtytemp[0]['SUM(stockqty)']
-# 				dbtransactions[x]["totalprice"] = dbtransactions[x]["stockprice"] * \
-# 					stockqtytemp[0]['SUM(stockqty)']
-
-# 				assetbalance = assetbalance + dbtransactions[x]["totalprice"]
-# 			else:
-# 				dbtransactions[x]["totalprice"] = dbtransactions[x]["stockprice"] * \
-# 					dbtransactions[x]['stockqty']
-# 				assetbalance = assetbalance + dbtransactions[x]["totalprice"]
-# 			dbtransactions[x]["stockprice"] = usd(
-# 				dbtransactions[x]["stockprice"])
-# 			dbtransactions[x]["totalprice"] = usd(
-# 				dbtransactions[x]["totalprice"])
-# 			rowtransactions.append(dbtransactions[x])
-# 				totalstockvalue = assetbalance-dbusers[0]['cash'] """
 
         # AMEND CODE
         for x in range(len(dbtransactions)):
@@ -116,74 +83,14 @@ def index():
         if request.form["submit_btn"] == "buy":
             if not request.form.get("shares"):
                 return apology("must provide qty to sell", 403)
-            #         rows = lookup(request.form.get("symbol"))
-            #         dbrows = db.execute(
-            #             "SELECT * FROM users WHERE id = ?", session["user_id"])
-            #         if float(dbrows[0]['cash']) < float(rows['price'])*float(request.form.get("shares")):
-            #             return apology("Not enough cash to buy this
-
-            #             db.execute("INSERT INTO transactions (userid, stockname, stocksymbol, stockprice, stockqty, totalprice,type) VALUES (?,?,?,?,?,?,?)",
-            #                        session["user_id"], rows['name'], rows['symbol'], rows['price'], float(request.form.get("shares")), float(rows['price'])*float(request.form.get("shares")), "TRUE")
-            #             db.execute("UPDATE users SET cash=? WHERE id=?",
-            #                        float(dbrows[0]['cash'])-float(rows['price'])*float(request.form.get("shares")), session["user_id"])
-            # # RETURN AGAIN SELF HOMEPAGE
-            #             return redirect("/")
+        # REDIRECT METHOD AND PASSING TWO VARIABLE
             return redirect(url_for('buy', symbol=request.form.get("symbol"), shares=request.form.get("shares")))
-    # WE CAN USE SUMBIT BUTTON TO CHECK THIS ACTION (SEE HTML)
+    # THIS IS SELL ACTION METHOD
         if request.form["submit_btn"] == "sell":
             if not request.form.get("shares"):
                 return apology("must provide qty to sell", 403)
+        # REDIRECT METHOD AND PASSING TWO VARIABLE
             return redirect(url_for('sell', symbol=request.form.get("symbol"), shares=request.form.get("shares")))
-#            currentstockinfo = lookup(request.form.get("symbol").upper())
-#             dbtransactions = db.execute(
-#                 "SELECT stockname, stocksymbol,stockprice,totalprice , SUM(stockqty)-(SELECT SUM(temptrans1.stockqty) FROM transactions AS temptrans1 WHERE temptrans1.type='FALSE' AND temptrans1.userid=temptrans.userid AND temptrans1.stocksymbol=temptrans.stocksymbol GROUP BY temptrans1.stocksymbol) as stockqty FROM transactions AS temptrans WHERE type='TRUE' AND userid=? GROUP BY stocksymbol", session["user_id"])
-#             currentsell = []
-#             rowtransactions = []
-#             print(dbtransactions)
-#             print(type(dbtransactions[0]["stockqty"]))
-#             position = 0
-#     # STILL NEED TO DO AGAIN TO CHECK WHETHER OK TO SELL FOR THE STOCK LIST, SEEMS TOO REPEAT CODE
-#             for x in range(len(dbtransactions)):
-#                 if dbtransactions[x]['stocksymbol'] == request.form.get("symbol").upper():
-#                     print(dbtransactions[x])
-
-#                     if dbtransactions[x]["stockqty"] == None:
-#                         stockqtytemp = db.execute("SELECT SUM(stockqty) FROM transactions as temptrans WHERE type='TRUE' AND userid=? AND stocksymbol=? GROUP BY userid, stocksymbol",
-#                                                   session["user_id"], currentstockinfo["symbol"])
-#                         print(x)
-#                         print(stockqtytemp)
-#                         dbtransactions[x]["stockqty"] = stockqtytemp[0]['SUM(stockqty)']
-#                     dbtransactions[x]["stockprice"] = currentstockinfo['price']
-#                     dbtransactions[x]["totalprice"] = dbtransactions[x]["stockqty"] * \
-#                         dbtransactions[x]["stockprice"]
-#                     rowtransactions.append(dbtransactions[x])
-#                     position = x
-
-#                 else:
-#                     if dbtransactions[x]["stockqty"] == None:
-#                         stockqtytemp = db.execute("SELECT SUM(stockqty) FROM transactions as temptrans WHERE type='TRUE' AND userid=? AND stocksymbol=? GROUP BY userid, stocksymbol",
-#                                                   session["user_id"], currentstockinfo["symbol"])
-#                         print(x)
-#                         print(stockqtytemp)
-#                         dbtransactions[x]["stockqty"] = stockqtytemp[0]['SUM(stockqty)']
-#                     print(dbtransactions[x]["stockqty"])
-#                     dbtransactions[x]["stockprice"] = currentstockinfo['price']
-#                     dbtransactions[x]["totalprice"] = dbtransactions[x]["stockqty"] * \
-#                         dbtransactions[x]["stockprice"]
-#                     rowtransactions.append(dbtransactions[x])
-#                     # if x == len(dbtransactions)-1:
-#                     #     return apology("You don't have this company to sell!", 403)
-#  # CHECK WHETHER IT IS OVER SELF OWNED QTY
-#             if int(request.form.get("shares")) < int(0) or dbtransactions[position]['stockqty'] < int(request.form.get("shares")):
-#                 return apology("Number of Shares needed greater than 0 or You cannot sell qty more than you have", 403)
-#             else:
-#                 dbrows = db.execute(
-#                     "SELECT * FROM users WHERE id = ?", session["user_id"])
-#                 db.execute("INSERT INTO transactions (userid, stockname, stocksymbol, stockprice, stockqty, totalprice,type) VALUES (?,?,?,?,?,?,?)",
-#                            session["user_id"], currentstockinfo['name'], currentstockinfo['symbol'], currentstockinfo['price'], float(request.form.get("shares")), float(currentstockinfo['price'])*float(request.form.get("shares")), "FALSE")
-#                 db.execute("UPDATE users SET cash=? WHERE id=?",
-#                            float(dbrows[0]['cash'])+float(currentstockinfo['price'])*float(request.form.get("shares")), session["user_id"])
-#                 return redirect("/")
 
 
 @ app.route("/buy", methods=["GET", "POST"])
@@ -198,15 +105,7 @@ def buy():
         else:
             symbolrequest = request.form.get("symbol")
             sharesrequest = request.form.get("shares")
-    # GET METHOD
-
-    # elif request.method == "GET":
-    #     with app.test_request_context('/buy', method='GET'):
-    #         print(session["user_id"])
-    #         dbrows = db.execute(
-    #             "SELECT * FROM users WHERE id = ?", session["user_id"])
-
-    #         return render_template("buy.html", clientname=dbrows[0]['username'], name="", price="", symbol="", shares="", balance=usd(dbrows[0]['cash']))
+    # SELL METHOD
     elif request.method == "GET":
         if request.args.get("symbol") is None:
             dbrows = db.execute(
@@ -242,16 +141,11 @@ def buy():
             dbrows = db.execute(
                 "SELECT * FROM users WHERE id = ?", session["user_id"])
             # return render_template("buy.html", clientname=dbrows[0]['username'], name=rows['name'], price=usd(rows['price']), symbol=rows['symbol'], shares=shares1, balance=usd(dbrows[0]['cash']))
+            # FLASH THE MSG TO HTML
             flash('Stock were successfully bought')
             return redirect("/")
-            # GET METHOD
-    # else:
-    #     dbrows = db.execute(
-    #         "SELECT * FROM users WHERE id = ?", session["user_id"])
-    #     return render_template("buy.html", clientname=dbrows[0]['username'], name="", price="", symbol="", shares="", balance=usd(dbrows[0]['cash']))
-    # return apology("TODO")
 
-
+# CHECK THE STRING INPUT WHETHER VALID OR NOT, STRING ACCEPT FLOAT, HOW TO MAKE?? DIFFICULT
 def stringtofloat(text):
 
     textlen = len(text)
@@ -342,18 +236,6 @@ def logout():
 @ login_required
 def quote():
     """Get stock quote."""
-    # if request.method == "POST":
-    #     if not request.form.get("symbol"):
-    #         return apology("must provide symbol", 403)
-    #     rows = lookup(request.form.get("symbol"))
-    #     # print(rows)
-    #     if rows != None:
-    #         return render_template("quoted.html", name=rows['name'], price=usd(rows['price']), symbol=rows['symbol'])
-    #         # return redirect("/quote")
-    #     else:
-    #         return apology("Cannot find this company!", 403)
-    # else:
-    #     return render_template("quoted.html", name=rows['name'], price=usd(rows['price']), symbol=rows['symbol'])
     if request.method == "POST":
         if not request.form.get("symbol"):
             return apology("must provide symbol", 400)
@@ -371,8 +253,6 @@ def register():
     """Register user"""
     render_template("register.html")
     if request.method == "POST":
-        # TODO: Add the user's entry into the database
-        # print(type(request.form.get("password")))
         # CHECK THE PASSWORD IS ALL NUMBER OR NOT AND AT LEAST ONE CHARACTER
         if request.form.get("password").isdigit():
             return apology("password and confirmed passoword needed the at least one character", 400)
@@ -415,14 +295,17 @@ def register():
 @ login_required
 def sell():
     # BELOW IS SELL CODE WITH FUNCTION SHOWING ALL THE EXISTING STOCK BUT TROUBLESOME AND STUPID CODE BECAUSE OF THE STUPID SQL, STAFF SQL IS GOOD
+    # SEEL BY POST
     if request.method == "POST":
         if not request.form.get("symbol") or not request.form.get("shares"):
             return apology("must provide symbol/qty", 400)
         symbolrequest = request.form.get("symbol")
         sharesrequest = request.form.get("shares")
+    # SELL BY GET FROM THE INDEX PAGE
     elif request.method == "GET" and request.args.get("symbol") and request.args.get("shares"):
         symbolrequest = request.args.get("symbol")
         sharesrequest = request.args.get("shares")
+    # JUST NORMAL GET
     else:
         # dbtransactions = db.execute(
         #     "SELECT stockname,stocksymbol ,stockprice, totalprice,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stocksymbol;", session["user_id"])
@@ -449,7 +332,7 @@ def sell():
             rowtransactions.append(dbtransactions[x])
         totalstockvalue = assetbalance-dbusers[0]['cash']
         return render_template("sell.html", clientname=dbusers[0]['username'], transactions=rowtransactions, cashbalance=usd(dbusers[0]['cash']), totalvalue=usd(totalstockvalue))
-
+    # ACTUAL SELL PROCEDURE
     currentstockinfo = lookup(symbolrequest.upper())
     if currentstockinfo == None:
         return apology("Cannot find this company!", 400)
