@@ -29,7 +29,7 @@
                     </div>
                     <div class="mb-3" >
                         <input type="hidden" id="sellprice" name="sellprice" placeholder="Price type="number" value={{price}}>
-                        Current Price:{{price}}
+                        <!--Current Price:{{price}}-->
                     </div>
                     <div class="mb-3" id="stocktotal">
 
@@ -58,13 +58,16 @@ function totalprice(){
                         </tr>
                     </thead>
                     <tbody>
+                        {% for transaction in transactions%}
+                            {% if transaction.stockqty!=0 %}
                             <tr>
-                                <td>{{name}}</td>
-                                <td id="stockprice1" >{{price}}</td>
-                                <td>{{shares}}</td>
-                                <td>{{symbol}}</td>
+                                <td>{{transaction.stockname}}</td>
+                                <td>{{transaction.stocksymbol}}</td>
+                                <td id="stockprice1" >{{transaction.stockprice}}</td>
+                                <td>{{transaction.stockqty}}</td>
                             </tr>
-
+                            {%endif%}
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
