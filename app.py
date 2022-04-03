@@ -51,7 +51,7 @@ def index():
     """Show portfolio of stocks"""
     if request.method == "GET":
         # BELOW SQL NOT GOOD COMPARE TO STAFF SQL, IT IS GROUP BY AND POSTRES AND SQLITE SYSNTAX SEEMS A BIT DIFFERENCE, GROUP BY NEEDED AGAIN stockname, stocksymbol and cannot select stockprice, totalvalue
-         dbtransactions = db.execute(
+        dbtransactions = db.execute(
             "SELECT stockname,stocksymbol,sum(case when type=FALSE then stockqty-2*stockqty else stockqty end) as stockqty FROM transactions WHERE userid=? GROUP BY stockname,stocksymbol;", session["user_id"])
 
         if dbtransactions is None:
@@ -146,6 +146,8 @@ def buy():
             return redirect("/")
 
 # CHECK THE STRING INPUT WHETHER VALID OR NOT, STRING ACCEPT FLOAT, HOW TO MAKE?? DIFFICULT
+
+
 def stringtofloat(text):
 
     textlen = len(text)
