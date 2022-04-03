@@ -1,4 +1,5 @@
 import os
+from pickle import TRUE
 import re
 from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, request, session, url_for
@@ -135,7 +136,7 @@ def buy():
             return apology("Not enough cash to buy this shares", 400)
         else:
             db.execute("INSERT INTO transactions (userid, stockname, stocksymbol, stockprice, stockqty, totalprice,type) VALUES (?,?,?,?,?,?,?)",
-                       session["user_id"], rows['name'], rows['symbol'], rows['price'], shares1, rows['price']*shares1, 1)
+                       session["user_id"], rows['name'], rows['symbol'], rows['price'], shares1, rows['price']*shares1, TRUE)
             db.execute("UPDATE users SET cash=? WHERE id=?",
                        float(dbrows[0]['cash']-rows['price'] * shares1), session["user_id"])
             dbrows = db.execute(
@@ -351,7 +352,7 @@ def sell():
         dbrows = db.execute(
             "SELECT * FROM users WHERE id = ?", session["user_id"])
         db.execute("INSERT INTO transactions (userid, stockname, stocksymbol, stockprice, stockqty, totalprice,type) VALUES (?,?,?,?,?,?,?)",
-                   session["user_id"], currentstockinfo['name'], currentstockinfo['symbol'], currentstockinfo['price'], float(sharesrequest), float(currentstockinfo['price'])*float(sharesrequest), 0)
+                   session["user_id"], currentstockinfo['name'], currentstockinfo['symbol'], currentstockinfo['price'], float(sharesrequest), float(currentstockinfo['price'])*float(sharesrequest), FALSE)
         db.execute("UPDATE users SET cash=? WHERE id=?",
                    float(dbrows[0]['cash'])+float(currentstockinfo['price'])*float(sharesrequest), session["user_id"])
         flash('Stock were successfully sold')
