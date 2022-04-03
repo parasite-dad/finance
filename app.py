@@ -352,7 +352,7 @@ def sell():
         dbrows = db.execute(
             "SELECT * FROM users WHERE id = ?", session["user_id"])
         db.execute("INSERT INTO transactions (userid, stockname, stocksymbol, stockprice, stockqty, totalprice,type) VALUES (?,?,?,?,?,?,?)",
-                   session["user_id"], currentstockinfo['name'], currentstockinfo['symbol'], currentstockinfo['price'], float(sharesrequest), float(currentstockinfo['price'])*float(sharesrequest), FALSE)
+                   session["user_id"], currentstockinfo['name'], currentstockinfo['symbol'], currentstockinfo['price'], float(sharesrequest), float(currentstockinfo['price'])*float(sharesrequest), 'FALSE')
         db.execute("UPDATE users SET cash=? WHERE id=?",
                    float(dbrows[0]['cash'])+float(currentstockinfo['price'])*float(sharesrequest), session["user_id"])
         flash('Stock were successfully sold')
