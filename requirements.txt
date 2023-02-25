@@ -20,8 +20,8 @@ urllib3==1.26.9
 Werkzeug==2.1.0
 zipp==3.7.0
 #libsqlite3-dev
-sqlite-devel
+#sqlite-devel
 gunicorn
 flask_sqlalchemy
-mysql-connector-python
+#mysql-connector-python
 # psycopg2
