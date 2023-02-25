@@ -9,6 +9,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import apology, login_required, lookup, usd
 
+# from flask_sqlalchemy import SQLAlchemy
+# from flask_mysqldb import MySQL
+# import MySQLdb.cursors
+
 # Configure application
 app = Flask(__name__)
 app.config['ENV'] = 'development'
@@ -29,12 +33,28 @@ Session(app)
 # Configure CS50 Library to use SQLite database
 db = SQL("sqlite:///finance.db")
 
+# USING POSTGRES
 # uri = os.getenv("DATABASE_URL")
 # if uri.startswith("postgres://"):
 #     uri = uri.replace("postgres://", "postgresql://")
 # db = SQL(uri)
 
+# USING MYSQL
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://ck:ab1234@localhost/finance'
+# app.config['DATABSE_URI']='mysql+mysqlconnector://{user}:{password}@{server}/{database}'.format(user='ck', password='ab1234', server='localhost', database='finance')
+# db = SQLAlchemy(app)
+
+# app.config['MYSQL_HOST'] = 'localhost'
+# app.config['MYSQL_USER'] = 'ck'
+# app.config['MYSQL_PASSWORD'] = 'ab1234'
+# app.config['MYSQL_DB'] = 'finance'
+# app.config['MYSQL_PORT'] = 3306
+# mysql = MySQL(app)
+# db = mysql.connection.cursor()
+# db = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
 # Make sure API key is set
+
 if not os.environ.get("API_KEY"):
     raise RuntimeError("API_KEY not set")
 
