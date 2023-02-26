@@ -13,7 +13,7 @@ itsdangerous==2.1.2
 Jinja2==3.1.1
 MarkupSafe==2.1.1
 requests==2.27.1
-SQLAlchemy==1.4.32
+#SQLAlchemy==1.4.32
 sqlparse==0.4.2
 termcolor==1.1.0
 urllib3==1.26.9
