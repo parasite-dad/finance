@@ -22,6 +22,6 @@ zipp==3.7.0
 #libsqlite3-dev
 #sqlite-devel
 gunicorn
-flask_sqlalchemy
+#flask_sqlalchemy
 #mysql-connector-python
 # psycopg2
